@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h2>Introduction</h2>
+<p>Welcome to the Breakout test! The intention of this test is to understand your abilities when given an entirely new game framework to work in.</p>
+<p>It has no time deadline, however we recommend spending no more than 4-6 hours on this test.</p>
+<p>The game framework defined within this project is a custom implementation of a basic Entity Component System (ECS). It implements only the most critical parts of a framework needed to get you off the ground and working. It is likely that you will need to add your own custom classes and implementations in order to successfully finish this project.</p>
+<p>By default, the framework is able to:</p>
+<ul>
+<li>Run at a specified frame rate, calling an update() and render() function each frame</li>
+<li>Load texture assets</li>
+<li>Detect basic mouse movement and input</li>
+<li>Display and transition between scenes. A scene holds a collection of entities.</li>
+<li>Add and parent entities. Entities can have their position, scale, and rotation modified.</li>
+<li>Render images within a scene via a component added to an entity.</li>
+<li>Render text within a scene via a component added to an entity.</li>
+<li>Render a button and respond to clicks via a component added to an entity.</li>
+</ul>
+<p>Note that the above implementations may contain minor bugs and issues. If an implementation listed above is causing an issue in your code, it's up to you to fix it!</p>
+<h2>API Documentation</h2>
+<p>The API for the game engine has been documented via JSDoc. You can access this documentation by opening ./docs/index.html</p>
+<p>The documentation provides high level descriptions of each class, method, and property within the core/ folder. It should be your main source of reference for structuring and implementing code.</p>
+<h2>Task Overview</h2>
+<p>The ask for this test is for you to implement a 'breakout' game. All assets you will need are located at ./assets/images/.</p>
+<h3>Core Task Breakdown</h3>
+<ol>
+<li>
+<p>Set the game size &amp; frame rate.</p>
+<ul>
+<li>The game should be rendered at 1024x576 at 60 frames per second.</li>
+</ul>
+</li>
+<li>
+<p>Finish implementation of the Loading Scene.</p>
+<ul>
+<li>This class is located at ./src/breakout/scenes/LoadingScene.js</li>
+<li>This scene should load all necessary assets needed for the menus &amp; gameplay.</li>
+<li>Make sure the asset position and sizing all match the sample as closely as possible.</li>
+<li>The loading bar should fill from left to right based on the completion progress of assets loaded.</li>
+<li>When all assets have been loaded, the loading scene should be replaced by the Splash Scene.
+<img src="../samples/breakout-sample-loading-scene.png" alt="Loading Sample"></li>
+</ul>
+</li>
+<li>
+<p>Implement the Splash Scene.</p>
+<ul>
+<li>Make sure the asset position and sizing all match the sample as closely as possible.</li>
+<li>The high score should be dynamic and automatically update when a player has achieved a new score during gameplay. It should default to 0 if the player has no high score.</li>
+<li>The Play button should use 'breakout-btn-purple.png'. When hovered over with a mouse, it should swap to 'breakout-btn-purple-hover.png'.</li>
+<li>When the Play button is clicked, it should take the user into the Game Scene.
+<img src="../samples/breakout-sample-splash-scene.png" alt="Splash Sample"></li>
+</ul>
+</li>
+<li>
+<p>Implement the Game Scene.</p>
+<ul>
+<li>Implement core breakout gameplay.
+<ul>
+<li>The paddle moves based on the users horizontal mouse position. The center of the paddle should match the mouse position. The paddle should move regardless of if the player has their left mouse button down or not.</li>
+<li>The player starts with three lives. Each time the ball goes past their paddle and offscreen, they lose a life. Once all lives are lost, the game is over.</li>
+<li>At the start of each life, including at the start of gameplay, the ball is automatically attached to the paddle. When the player clicks their mouse, the ball launches from the paddle. During this time, the player should still be able to move the paddle around.</li>
+<li>The ball should bounce off the walls of the game space.</li>
+<li>The ball should bounce off the bricks in the game space. When a ball hits a brick, the brick disappears and the players score is incremented by 1.</li>
+<li>When all bricks have been destroyed, respawn them after a 2 second delay and increase the ball speed by 25%.</li>
+<li>The angle the ball bounces off the paddle should be modified slightly by the location it hits the paddle at. The further the ball is to the edge of the paddle, the more extreme the angle.</li>
+</ul>
+</li>
+<li>Implement the scoring display in the HUD
+<ul>
+<li>The high score should display the users high score. When it is overtaken during gameplay, it should auto-update along with the current score.</li>
+<li>The score should display the users current score within gameplay. This is reset each time the user replays the game.</li>
+</ul>
+</li>
+<li>Implement the pause button. When pressed it should pause all gameplay and launch the Pause Scene over top of the game.</li>
+<li>The pause button should use 'breakout-btn-pause.png' and swap to 'breakout-btn-pause-hover.png' when a mouse hovers over it.
+<img src="../samples/breakout-sample-gameplay.png" alt="Gameplay Sample"></li>
+</ul>
+</li>
+<li>
+<p>Implement the Pause Scene.</p>
+<ul>
+<li>This sits over the game scene and should pause all game logic until resumed.</li>
+<li>The Resume button should exit the Pause Scene and resume gameplay.</li>
+<li>The Quit button should exit both the Pause Scene and the Game Scene and return the player to the Splash Scene.</li>
+<li>For both buttons, they should use 'breakout-btn-pink.png' and swap to 'breakout-btn-pink-hover.png' when a mouse hovers over them.
+<img src="../samples/breakout-sample-pause-scene.png" alt="Pause Sample"></li>
+</ul>
+</li>
+<li>
+<p>Implement the Game Over Scene.</p>
+<ul>
+<li>This sits over top of the game scene once all lives have been lost.</li>
+<li>The score displayed is the score the player achieved in their last game session.</li>
+<li>The high score displayed is the highest score the player has ever achieved across all sessions.</li>
+<li>The Replay button exits the Game Over Scene and restarts gameplay with a score of 0, a full board of bricks, and three lives.</li>
+<li>The Quit button exits the Game Over Scene and the Game Scene and returns the player to the Splash Scene.</li>
+<li>For both buttons, they should use 'breakout-btn-pink.png' and swap to 'breakout-btn-pink-hover.png' when a mouse hovers over them.
+<img src="../samples/breakout-sample-game-over-scene.png" alt="Game Over Sample"></li>
+</ul>
+</li>
+</ol>
+<h2>Things to Consider</h2>
+<ul>
+<li>The codebase lacks a physics system. Breakout is relatively simple in terms of what 'physics' need to be in place for gameplay to function. Think about what sort of 'arcade' or 'mock' physics can you create to avoid unnecessary code overhead.</li>
+<li>Buttons are already setup to respond to clicks through a mouse down event, but they currently have no implementation for when a mouse is over them. Consider how you can update or extend the Button class to provide easy to modify functionality when buttons are hovered over top of.</li>
+<li>It's expected that you make use of the entity component system when implementing functionality. While breakout is a simple game and can be written within a single file, we want to see how you would structure code when working within a framework that already has a pre-defined structure. It's expected that you will write several components, scenes, and other classes in order to complete this test.</li>
+<li>It is highly recommended that you make use of the console within your Web Inspector. This will log out any runtime errors that occur.</li>
+<li>Your submission will be tested only on Google Chrome. Do not worry about any other browser compatibility.</li>
+<li>Code is expected to be relatively clean and easy to follow. We prefer easy to read code that feels self documenting over clever shorthand hacks. For any spots that you may feel is overly complex or hard to understand, it's recommended to add a code comment explaining your logic.</li>
+</ul>
+<h2>Bonus Points</h2>
+<ul>
+<li>Instantiate a local GIT repo and make commits along the way as you tackle each task. This will help us see your workflow and allow us to identify the major changes and additions you made in a much easier way.</li>
+</ul>
+<h2>Getting Started</h2>
+<ol>
+<li>Install node.js (https://nodejs.org/en/)</li>
+<li>Point your terminal to the root directory of this project. The root directory is the directory containing the README.md &amp; package.json.</li>
+<li>Run 'npm install'. This will download all necessary modules as pre-defined within the package.json</li>
+<li>Run 'npm start'. This will launch a local server which will allow you to see and test the game.</li>
+<li>After making code changes, run 'npm run build'. This will use Google Closure Compiler to re-compile the game.</li>
+</ol>
+<h2>Good Luck!</h2>
+<ul>
+<li>Once you have finished the test, e-mail us a .zip of your final source code. It's recommended to disinclude the node_modules/ folder to reduce the .zip file size.</li>
+</ul></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AssetLoader.html">AssetLoader</a></li><li><a href="AssetManager.html">AssetManager</a></li><li><a href="Button.html">Button</a></li><li><a href="CanvasRenderer.html">CanvasRenderer</a></li><li><a href="Component.html">Component</a></li><li><a href="Engine.html">Engine</a></li><li><a href="Entity.html">Entity</a></li><li><a href="EventDispatcher.html">EventDispatcher</a></li><li><a href="FileType.html">FileType</a></li><li><a href="Image.html">Image</a></li><li><a href="InputManager.html">InputManager</a></li><li><a href="Mouse.html">Mouse</a></li><li><a href="MouseEvent.html">MouseEvent</a></li><li><a href="Scene.html">Scene</a></li><li><a href="SceneManager.html">SceneManager</a></li><li><a href="TextAlign.html">TextAlign</a></li><li><a href="TextField.html">TextField</a></li><li><a href="TextFieldConfig.html">TextFieldConfig</a></li><li><a href="TimeManager.html">TimeManager</a></li><li><a href="Vector2.html">Vector2</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Thu Nov 12 2020 15:30:13 GMT-0800 (Pacific Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

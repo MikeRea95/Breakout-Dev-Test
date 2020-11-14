@@ -1,0 +1,18 @@
+{
+  "name": "breakout",
+  "version": "1.0.0",
+  "description": "A programming test for F84 Games",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "http-server -c-1 -o",
+    "build": "google-closure-compiler --language_in=ECMASCRIPT6 --js=src/**.js --js_output_file=js/game.js",
+    "docs": "jsdoc -r src/core/ -d docs/ -R README.md"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "google-closure-compiler": "^20201006.0.0",
+    "http-server": "^0.12.3",
+    "jsdoc": "^3.6.6"
+  }
+}
