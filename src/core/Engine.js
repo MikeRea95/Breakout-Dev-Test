@@ -5,16 +5,14 @@ import SceneManager from "./SceneManager.js";
 import TimeManager from "./TimeManager.js";
 import InputManager from "./input/InputManager.js";
 
-export default class Engine
-{
+export default class Engine {
     /**
      * @constructs Engine The core renderer that handles rendering all assets to the HTML5 canvas.
      * @param {Number} width The width of the game.
      * @param {Number} height The height of the game.
      * @param {Number} frameRate The frame rate the game runs at.
      */
-    constructor(width, height, frameRate)
-    {
+    constructor(width, height, frameRate) {
         /** 
          * The Canvas renderer that handles all rendering within the engine.
          * @public
@@ -52,14 +50,21 @@ export default class Engine
         this.input = new InputManager(this);
     }
 
+    getHeight() {
+        return this.renderer.height;
+    }
+
+    getWidth() {
+        return this.renderer.width;
+    }
+
     /**
      * Called by the Time Manager. This loop runs at the specified frame rate. Each loop is one update() call which updates all scenes, entities, and components, and one render call which then draws all scenes, entities, and components to the canvas.
      * @instance
      * @private
      * @memberof Engine
      */
-    loop()
-    {
+    loop() {
         this.update(this.time.deltaTime);
         this.render();
     }
@@ -70,8 +75,7 @@ export default class Engine
      * @private
      * @memberof Engine
      */
-    update(delta)
-    {
+    update(delta) {
         this.scenes.update(delta);
     }
 
@@ -81,8 +85,7 @@ export default class Engine
      * @private
      * @memberof Engine
      */
-    render()
-    {
+    render() {
         this.renderer.clear();
         this.scenes.render(this.renderer.context);
     }

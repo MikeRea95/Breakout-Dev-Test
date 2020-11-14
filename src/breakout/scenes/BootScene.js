@@ -13,6 +13,7 @@ export default class BootScene extends Scene
         this.loader.load("splashBackground", "./assets/images/breakout-splash-background.png", FileType.TEXTURE);
         this.loader.load("loadingBarBackground", "./assets/images/breakout-loading-bar-background.png", FileType.TEXTURE);
         this.loader.load("loadingBarFill", "./assets/images/breakout-loading-bar-fill.png", FileType.TEXTURE);
+        this.loader.load("gameTitleImage", "./assets/images/breakout-game-title.png", FileType.TEXTURE);
     }
 
     update(delta)
