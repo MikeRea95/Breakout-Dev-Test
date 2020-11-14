@@ -10,12 +10,20 @@ export default class Button extends Component
      * @param {Entity} entity The entity the button component will be attached to.
      * @param {Number} width The width of the button.
      * @param {Number} height The height of the button.
+     * @param {Function} onHoverCallback The function to call when the button is hovered over.
      * @param {Function} onClickCallback The function the button will call when clicked.
      * @param {any} onClickCallbackContext The context that will be bound to the function when called. Usually set to 'this'.
      */
-    constructor(entity, width, height, onClickCallback, onClickCallbackContext=null)
+    constructor(entity, width, height, onHoverCallback, onClickCallback, onClickCallbackContext=null)
     {
         super(entity);
+        /** 
+         * The function the button will call when hovered over.
+         * @public
+         * @type {Function} 
+         * @member Button#onHoverCallback
+         */
+        this.onHoverCallback = onHoverCallback;
         /** 
          * The function the button will call when clicked.
          * @public
@@ -52,7 +60,10 @@ export default class Button extends Component
          */
         this.origin = new Vector2(0.5, 0.5);
 
+        this.hovering = false;
+
         this.entity.scene.input.mouse.events.addEventListener(MouseEvent.MOUSE_DOWN, this.onMouseDown, this);
+        this.entity.scene.input.mouse.events.addEventListener(MouseEvent.MOUSE_MOVE, this.onMouseHover, this);
     }
 
     /**
@@ -80,6 +91,28 @@ export default class Button extends Component
         }
     }
 
+    onMouseHover(event){
+        const position = this.entity.getPosition();
+        const scale = this.entity.getScale();
+        const rotation = this.entity.getRotation();
+
+        const x0 = position.x - this.width*scale.x*this.origin.x;
+        const x1 = position.x + this.width*scale.x*(1.0-this.origin.x);
+        const y0 = position.y - this.height*scale.y*this.origin.y;
+        const y1 = position.y + this.height*scale.y*(1.0-this.origin.y);
+        if(event.x>=x0 && event.x<=x1 && event.y>=y0 && event.y<=y1)
+        {
+            if(!this.hovering){
+                this.onHoverCallback.bind((this.onClickCallbackContext))(true);
+                this.hovering = true;
+            }
+        }
+        else if(this.hovering){
+            this.onHoverCallback.bind(this.onClickCallbackContext)(false);
+            this.hovering = false;
+        }
+    }
+
     /**
      * Cleans up input listeners the button is subscribed to.
      * @instance
@@ -89,5 +122,6 @@ export default class Button extends Component
     destroy()
     {
         this.entity.scene.input.mouse.events.removeEventListener(MouseEvent.MOUSE_DOWN, this.onMouseDown, this);
+        this.entity.scene.input.mouse.events.removeEventListener(MouseEvent.MOUSE_MOVE, this.onMouseHover, this);
     }
 }

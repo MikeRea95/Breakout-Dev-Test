@@ -4,6 +4,7 @@ import Image from '../../core/components/Image.js';
 import Entity from '../../core/Entity.js';
 import TextField, { TextFieldConfig, TextAlign } from '../../core/components/TextField.js';
 import SplashScreen from './SplashScreen.js';
+import Vector2 from '../../core/math/Vector2.js';
 
 export default class LoadingScene extends Scene
 {
@@ -17,7 +18,12 @@ export default class LoadingScene extends Scene
         this.engine = engine;
 
         this.loader = new AssetLoader(this);
-        /*Load assets here*/
+        this.loader.load("gameTitleImage", "./assets/images/breakout-game-title.png", FileType.TEXTURE);
+        this.loader.load("gameTitleDashedLine", "./assets/images/breakout-splash-dashed-line.png", FileType.TEXTURE);
+        this.loader.load("playButtonPurple", "./assets/images/breakout-btn-purple.png", FileType.TEXTURE);
+        this.loader.load("playButtonHovered", "./assets/images/breakout-btn-purple-hover.png", FileType.TEXTURE);
+        this.loader.load("playButtonImage", "./assets/images/breakout-play-icon.png", FileType.TEXTURE);
+        this.loader.load("gameSceneBackground", "./assets/images/breakout-gameplay-background.png", FileType.TEXTURE);
 
         const backgroundEntity = new Entity(this, engine.getWidth() / 2, engine.getHeight() / 2);
         new Image(backgroundEntity, "splashBackground");
@@ -29,19 +35,19 @@ export default class LoadingScene extends Scene
         new Image(loadingBarBackgroundEntity, "loadingBarBackground");
 
         const loadingBarFillEntity = new Entity(this, engine.getWidth() / 2, engine.getHeight() / 2 - 30);
-        new Image(loadingBarFillEntity, "loadingBarFill");
+        this.fill = new Image(loadingBarFillEntity, "loadingBarFill");
+        this.fill.origin = new Vector2(0, 0.5); // Left-align.
+        loadingBarFillEntity.localPosition.x -= this.fill.width/2;
+        this.totalFillWidth = this.fill.width; // Ensure we always keep track of what the width should be.
     }
 
     update(delta)
     {
-        if(this.counter == null){
-            this.counter = 0;
-        }
         super.update(delta);
-
-        this.counter++;
-        console.log(this.counter);
-        if(this.counter == 60){
+        
+        this.fill.width = this.totalFillWidth * this.loader.assetsLoaded / this.loader.totalAssets;
+        if(this.loader.assetsLoaded == this.loader.totalAssets)
+        {
             //Remove this scene
             this.engine.scenes.remove(this);
             //Add our new loading scene
