@@ -100,6 +100,9 @@ export default class Button extends Component
         const x1 = position.x + this.width*scale.x*(1.0-this.origin.x);
         const y0 = position.y - this.height*scale.y*this.origin.y;
         const y1 = position.y + this.height*scale.y*(1.0-this.origin.y);
+        if(this.onHoverCallback == null){
+            return;
+        }
         if(event.x>=x0 && event.x<=x1 && event.y>=y0 && event.y<=y1)
         {
             if(!this.hovering){

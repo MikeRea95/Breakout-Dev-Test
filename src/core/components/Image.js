@@ -70,4 +70,8 @@ export default class Image extends Component
 
         context.restore();
     }
+
+    destroy(){
+        super.destroy();
+    }
 }

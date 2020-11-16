@@ -6,6 +6,7 @@ import TimeManager from "./TimeManager.js";
 import InputManager from "./input/InputManager.js";
 
 export default class Engine {
+
     /**
      * @constructs Engine The core renderer that handles rendering all assets to the HTML5 canvas.
      * @param {Number} width The width of the game.
@@ -48,6 +49,8 @@ export default class Engine {
          * @member Engine#input
          */
         this.input = new InputManager(this);
+
+        this.highScore = 5;
     }
 
     getHeight() {
@@ -56,6 +59,10 @@ export default class Engine {
 
     getWidth() {
         return this.renderer.width;
+    }
+
+    getHighScore(){
+        return this.highScore;
     }
 
     /**
