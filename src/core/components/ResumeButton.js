@@ -3,7 +3,7 @@ import Entity from "../Entity.js";
 import Image from "./Image.js";
 import Button from "./Button.js";
 
-export default class PauseButton extends Component
+export default class ResumeButton extends Component
 {
     /**
      * 
@@ -36,20 +36,18 @@ export default class PauseButton extends Component
      * @param {bool} truthy Whether or not the button is being hovered over.
      */
     hoveredOver(truthy){
-        if(truthy && !this.scene.paused){
+        if(truthy){
             this.image.destroy();
-            this.image = new Image(this.entity, "pauseButtonHovered");
+            this.image = new Image(this.entity, "pinkButtonHovered");
         }
         else{
             this.image.destroy();
-            this.image = new Image(this.entity, "pauseButton");
+            this.image = new Image(this.entity, "pinkButton");
         }
     }
 
     buttonClicked(){
-        if(!this.scene.paused){
-            this.scene.pause.call(this.scene);
-        }
+        this.scene.resume.call(this.scene);
     }
 
     destroy(){

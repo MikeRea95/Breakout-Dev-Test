@@ -6,6 +6,7 @@ import Vector2 from '../../core/math/Vector2.js';
 import Button from '../../core/components/Button.js';
 import PauseButton from '../../core/components/PauseButton.js';
 import Engine from '../../core/Engine.js';
+import PauseScene from './PauseScene.js';
 
 export default class GameScene extends Scene{
     /**
@@ -58,9 +59,26 @@ export default class GameScene extends Scene{
 
         const ballEntity = new Entity(this, engine.getWidth() / 2, engine.getHeight() - 50);
         new Image(ballEntity, "ball");
+
+        this.counter = 0;
+        this.paused = false;
+    }
+
+    pause(){
+        this.paused = true;
+        this.pauseScene = new PauseScene(this.engine, this);
+        this.engine.scenes.add(this.pauseScene);
+    }
+
+    resume(){
+        this.paused = false;
+        this.engine.scenes.remove(this.pauseScene);
     }
 
     update(delta){
-        
+        if(!this.paused){
+            console.log(this.counter + "\t" + delta);
+            this.counter++;
+        }
     }
 }

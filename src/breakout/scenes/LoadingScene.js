@@ -32,6 +32,11 @@ export default class LoadingScene extends Scene
         this.loader.load("brick", "./assets/images/breakout-enemy-brick.png", FileType.TEXTURE);
         this.loader.load("paddle", "./assets/images/breakout-player-paddle.png", FileType.TEXTURE);
         this.loader.load("ball", "./assets/images/breakout-ball.png", FileType.TEXTURE);
+        this.loader.load("overlay", "./assets/images/breakout-overlay.png", FileType.TEXTURE);
+        this.loader.load("pauseBackground", "./assets/images/breakout-pause-background.png", FileType.TEXTURE);
+        this.loader.load("pauseLine", "./assets/images/breakout-pause-dashed-line.png", FileType.TEXTURE);
+        this.loader.load("pinkButton", "./assets/images/breakout-btn-pink.png", FileType.TEXTURE);
+        this.loader.load("pinkButtonHovered", "./assets/images/breakout-btn-pink-hover.png", FileType.TEXTURE);
 
         const backgroundEntity = new Entity(this, engine.getWidth() / 2, engine.getHeight() / 2);
         new Image(backgroundEntity, "splashBackground");

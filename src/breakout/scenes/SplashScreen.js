@@ -44,9 +44,7 @@ export default class SplashScreen extends Scene
     }
 
     loadGame(){
-        //Remove this scene
         this.engine.scenes.remove(this);
-        //Add our new loading scene
         this.engine.scenes.add(new GameScene(this.engine));
     }
 
