@@ -39,4 +39,8 @@ export default class Ball extends Component
         this.direction = new Vector2(0,1);
         this.launched = false;
     }
+
+    setDirection(vector){
+        this.direction = vector;
+    }
 }

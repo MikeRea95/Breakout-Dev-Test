@@ -193,6 +193,9 @@ export default class GameScene extends Scene{
                 }
                 
                 this.bricks.splice(this.bricks.indexOf(brick), 1);
+                if(this.bricks.length === 0){
+                    console.log("Breakout!");
+                }
                 brick.destroy();
                 this.score++;
                 this.currentScoreText.text = "Score: " + this.score;
@@ -206,8 +209,26 @@ export default class GameScene extends Scene{
             if(this.ballEntity.localPosition.x > this.paddleEntity.localPosition.x - this.paddleEntity.components[0].width / 2 &&
                 this.ballEntity.localPosition.x < this.paddleEntity.localPosition.x + this.paddleEntity.components[0].width / 2 &&
                 this.ballEntity.localPosition.y > this.paddleEntity.localPosition.y - this.ballEntity.components[0].height / 2){
-                    this.ballEntity.components[1].flipVertical.call(this.ballEntity.components[1]);
+
+                    vector = new Vector2(0,-this.ballEntity.components[1].direction.y);
+                    x = this.ballEntity.localPosition.x - this.paddleEntity.localPosition.x;
+                    x = x / this.paddleEntity.components[0].width * 2;
+                    vector.x = x;
+                    this.ballEntity.components[1].setDirection.call(this.ballEntity.components[1], vector);
                 }
+        }
+
+        if(this.ballEntity.localPosition.x >= this.engine.getWidth() - this.ballEntity.components[0].width / 2 &&
+           this.ballEntity.components[1].direction.x > 0){
+            this.ballEntity.components[1].flipHorizontal.call(this.ballEntity.components[1]);
+        }
+        if(this.ballEntity.localPosition.x <= this.ballEntity.components[0].width / 2 &&
+            this.ballEntity.components[1].direction.x < 0){
+            this.ballEntity.components[1].flipHorizontal.call(this.ballEntity.components[1]);
+        }
+        if(this.ballEntity.localPosition.y < this.ballEntity.components[0].height / 2 &&
+            this.ballEntity.components[1].direction.y < 0){
+            this.ballEntity.components[1].flipVertical.call(this.ballEntity.components[1]);
         }
     }
 
