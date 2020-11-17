@@ -198,9 +198,16 @@ export default class GameScene extends Scene{
                 this.currentScoreText.text = "Score: " + this.score;
                 this.engine.highScore = Math.max(this.score, this.engine.highScore);
                 this.highScoreText.text = "High Score: " + this.engine.highScore;
-                this.paused = false;    
                 break;
             }
+        }
+
+        if(this.ballEntity.components[1].direction.y < 0){
+            if(this.ballEntity.localPosition.x > this.paddleEntity.localPosition.x - this.paddleEntity.components[0].width / 2 &&
+                this.ballEntity.localPosition.x < this.paddleEntity.localPosition.x + this.paddleEntity.components[0].width / 2 &&
+                this.ballEntity.localPosition.y > this.paddleEntity.localPosition.y - this.ballEntity.components[0].height / 2){
+                    this.ballEntity.components[1].flipVertical.call(this.ballEntity.components[1]);
+                }
         }
     }
 
