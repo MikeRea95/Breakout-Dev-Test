@@ -14,21 +14,20 @@ export default class LivesController extends Component
         super(entity);
         this.entity = entity;
 
-        this.livesLeft = 1;
+        this.livesLeft = 3;
         this.lifeEntities = [lifeOne, lifeTwo, lifeThree];
     }
 
     loseLife(){
         this.livesLeft--;
         for(i = 0; i < this.lifeEntities.length; i++){
+            this.lifeEntities[i].components[0].destroy();
+            this.lifeEntities[i].components.shift();
+
             if(i < this.livesLeft){
-                this.lifeEntities[i].components[0].destroy();
-                this.lifeEntities[i].components.shift();
                 new Image(this.lifeEntities[i], "lifeFull");
             }
             else{
-                this.lifeEntities[i].components[0].destroy();
-                this.lifeEntities[i].components.shift();
                 new Image(this.lifeEntities[i], "lifeEmpty");
             }
         }

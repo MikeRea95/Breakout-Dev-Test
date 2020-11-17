@@ -55,17 +55,7 @@ export default class GameScene extends Scene{
         new Image(lifeThree, "lifeFull");
         this.livesController = new LivesController(livesEntity, lifeOne, lifeTwo, lifeThree);
 
-        this.bricks = [];
-
-        // Add in all the bricks, utilize a ternary to offset the last row.
-        for(i = 0; i < 4; i++){
-            for(k = 0; k < (i == 3 ? 5 : 6); k++){
-                let newBrick = new Entity(this, 150 * (k + 1) + (i == 3 ? 75 : 0), 125 + 50 * i);
-                new Image(newBrick, "brick");
-
-                this.bricks.push(newBrick);
-            }
-        }
+        this.buildBricks();
         
         this.paddleEntity = new Entity(this, engine.getWidth() / 2, engine.getHeight() - 25);
         new Image(this.paddleEntity, "paddle");
@@ -77,8 +67,22 @@ export default class GameScene extends Scene{
         this.loaded = loaded;
         this.input.mouse.events.addEventListener(MouseEvent.MOUSE_DOWN, this.onMouseDown, this);
 
-        this.counter = 0;
+        this.counter = 121;
         this.paused = false;
+    }
+
+    buildBricks(){
+        this.bricks = [];
+
+        // Add in all the bricks, utilize a ternary to offset the last row.
+        for(i = 0; i < 4; i++){
+            for(k = 0; k < (i == 3 ? 5 : 6); k++){
+                let newBrick = new Entity(this, 150 * (k + 1) + (i == 3 ? 75 : 0), 125 + 50 * i);
+                new Image(newBrick, "brick");
+
+                this.bricks.push(newBrick);
+            }
+        }
     }
 
     onMouseDown(){
@@ -105,6 +109,9 @@ export default class GameScene extends Scene{
     update(delta){
         if(!this.paused){
             this.counter++;
+            if(this.counter === 120){
+                this.reset();
+            }
 
             this.moveMouse();
             if(this.ballEntity.components[1].launched){
@@ -184,6 +191,10 @@ export default class GameScene extends Scene{
             distY = circleY - testY;
             distance = Math.sqrt((distX * distX) + (distY * distY));
 
+            // This detection system is janky, to put it one way.
+            // It's interesting to build my own physics system, and in JS of all languages,
+            // but I also know in the back of my head I could've done this entire project in
+            // under 30 minutes in Unity. Oh well, the challenge was fun! Thanks for that! :)
             if(distance <= this.ballEntity.components[1].radius){
                 if(closestEdge === "Bottom" || closestEdge === "Top"){
                     this.ballEntity.components[1].flipVertical.call(this.ballEntity.components[1]);
@@ -194,7 +205,7 @@ export default class GameScene extends Scene{
                 
                 this.bricks.splice(this.bricks.indexOf(brick), 1);
                 if(this.bricks.length === 0){
-                    console.log("Breakout!");
+                    this.counter = 0;
                 }
                 brick.destroy();
                 this.score++;
@@ -227,9 +238,15 @@ export default class GameScene extends Scene{
             this.ballEntity.components[1].flipHorizontal.call(this.ballEntity.components[1]);
         }
         if(this.ballEntity.localPosition.y < this.ballEntity.components[0].height / 2 &&
-            this.ballEntity.components[1].direction.y < 0){
+            this.ballEntity.components[1].direction.y > 0){
             this.ballEntity.components[1].flipVertical.call(this.ballEntity.components[1]);
         }
+    }
+
+    reset(){
+        this.ballEntity.components[1].reset.call(this.ballEntity.components[1]);
+        this.ballEntity.components[1].speed *= 1.25;
+        this.buildBricks();
     }
 
     destroy(){
