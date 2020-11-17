@@ -7,6 +7,10 @@ import Button from '../../core/components/Button.js';
 import PauseButton from '../../core/components/PauseButton.js';
 import Engine from '../../core/Engine.js';
 import PauseScene from './PauseScene.js';
+import Ball from '../../core/components/Ball.js';
+import Mouse from '../../core/input/Mouse.js';
+import InputManager from '../../core/input/InputManager.js';
+import { MouseEvent } from "../../core/input/Mouse.js";
 
 export default class GameScene extends Scene{
     /**
@@ -16,6 +20,7 @@ export default class GameScene extends Scene{
     constructor(engine)
     {
         super(engine);
+        this.paused = true;
         this.engine = engine;
         
         const backgroundEntity = new Entity(this, engine.getWidth() / 2, engine.getHeight() / 2);
@@ -46,22 +51,40 @@ export default class GameScene extends Scene{
         const lifeThree = new Entity(this, engine.getWidth() - 20, 50);
         new Image(lifeThree, "lifeFull");
 
+        this.bricks = [];
+
         // Add in all the bricks, utilize a ternary to offset the last row.
         for(i = 0; i < 4; i++){
             for(k = 0; k < (i == 3 ? 5 : 6); k++){
-                newBrick = new Entity(this, 150 * (k + 1) + (i == 3 ? 75 : 0), 125 + 50 * i);
+                let newBrick = new Entity(this, 150 * (k + 1) + (i == 3 ? 75 : 0), 125 + 50 * i);
                 new Image(newBrick, "brick");
+
+                this.bricks.push(newBrick);
             }
         }
+        
+        this.paddleEntity = new Entity(this, engine.getWidth() / 2, engine.getHeight() - 25);
+        new Image(this.paddleEntity, "paddle");
 
-        const paddleEntity = new Entity(this, engine.getWidth() / 2, engine.getHeight() - 25);
-        new Image(paddleEntity, "paddle");
+        this.ballEntity = new Entity(this, engine.getWidth() / 2, engine.getHeight() - 50);
+        new Image(this.ballEntity, "ball");
+        new Ball(this.ballEntity);
 
-        const ballEntity = new Entity(this, engine.getWidth() / 2, engine.getHeight() - 50);
-        new Image(ballEntity, "ball");
+        this.loaded = false;
+        this.input.mouse.events.addEventListener(MouseEvent.MOUSE_DOWN, this.onMouseDown, this);
 
         this.counter = 0;
         this.paused = false;
+    }
+
+    onMouseDown(){
+        if(!this.paused && this.loaded){
+            this.ballEntity.components[1].launched = true;
+        }
+        // For reasons unknown to me, this function gets called as soon as the scene is loaded,
+        // so I ignore the very first call.
+        // Javascript works in mysterious ways.
+        this.loaded = true;
     }
 
     pause(){
@@ -77,8 +100,95 @@ export default class GameScene extends Scene{
 
     update(delta){
         if(!this.paused){
-            console.log(this.counter + "\t" + delta);
             this.counter++;
+
+            this.moveMouse();
+            if(this.ballEntity.components[1].launched){
+                this.ballEntity.components[1].move.call(this.ballEntity.components[1], delta);
+                this.detectCollisions();
+            }
+            else{
+                this.movePaddleWithMouse();
+            }
         }
+    }
+
+    moveMouse(){
+        min = this.paddleEntity.components[0].width/2;
+        max = this.engine.getWidth() - this.paddleEntity.components[0].width/2;
+        // Clamp the paddle's position to within the window
+        x = Math.min(Math.max(this.engine.input.mouse.position.x, min), max);
+        this.paddleEntity.localPosition = new Vector2(x, this.paddleEntity.localPosition.y);
+    }
+
+    movePaddleWithMouse(){
+        this.ballEntity.localPosition = new Vector2(this.paddleEntity.localPosition.x, this.paddleEntity.localPosition.y - 25);
+    }
+
+    detectCollisions(){
+        for(i = 0; i < this.bricks.length; i++){
+            circleX = this.ballEntity.localPosition.x;
+            circleY = this.ballEntity.localPosition.y;
+
+            brick = this.bricks[i];
+            if(brick.destroyed){
+                continue;
+            }
+            brickX = brick.localPosition.x;
+            brickY = brick.localPosition.y;
+
+            brickWidth = brick.components[0].width / 2;
+            brickHeight = brick.components[0].height / 2;
+
+            testX = circleX;
+            testY = circleY;
+
+            closestEdge = "";
+
+            /* Test which edge is closest, preference on top/left. */
+            // If we're to the left of the brick's center
+            if(circleX < brickX - brickWidth){
+                testX = brickX;
+                closestEdge = "Left";
+            } // Or all the way to the right
+            else if(circleX > brickX + brickWidth){
+                testX = brickX + brickWidth;
+                closestEdge = "Right";
+            }
+
+            // If we're above the brick's center
+            if (circleY < brickY - brickHeight){
+                testY = brickY;
+                closestEdge = "Top";
+            } // Or all the way below it
+            else if (circleY > brickY + brickHeight){
+                testY = brickY + brickHeight;
+                closestEdge = "Bottom";
+            }
+
+            distX = circleX - testX;
+            distY = circleY - testY;
+            distance = Math.sqrt((distX * distX) + (distY * distY));
+
+            console.log(this.ballEntity.components[1].radius);
+            if(distance <= this.ballEntity.components[1].radius){
+                if(closestEdge === "Bottom" || closestEdge === "Top"){
+                    this.ballEntity.components[1].flipVertical.call(this.ballEntity.components[1]);
+                }
+                else{
+                    this.ballEntity.components[1].flipHorizontal.call(this.ballEntity.components[1]);
+                }
+                
+                this.bricks.splice(this.bricks.indexOf(brick), 1);
+                brick.destroy();
+                this.paused = false;
+                break;
+            }
+        }
+    }
+
+    destroy(){
+        super.destroy();
+        this.engine.input.mouse.events.removeEventListener(MouseEvent.MOUSE_DOWN, this.onMouseDown, this);
     }
 }

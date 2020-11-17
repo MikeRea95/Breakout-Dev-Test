@@ -43,8 +43,12 @@ export default class Vector2
      */
     multiply(value)
     {
+        console.log(this);
+        console.log(value);
         this.x *= value.x;
         this.y *= value.y;
+        console.log(this);
+        console.log(value);
     }
 
     /**
