@@ -37,6 +37,8 @@ export default class LoadingScene extends Scene
         this.loader.load("pauseLine", "./assets/images/breakout-pause-dashed-line.png", FileType.TEXTURE);
         this.loader.load("pinkButton", "./assets/images/breakout-btn-pink.png", FileType.TEXTURE);
         this.loader.load("pinkButtonHovered", "./assets/images/breakout-btn-pink-hover.png", FileType.TEXTURE);
+        this.loader.load("gameOverBackground", "./assets/images/breakout-game-over-background.png", FileType.TEXTURE);
+        this.loader.load("gameOverLine", "./assets/images/breakout-game-over-dashed-line.png", FileType.TEXTURE);
 
         const backgroundEntity = new Entity(this, engine.getWidth() / 2, engine.getHeight() / 2);
         new Image(backgroundEntity, "splashBackground");

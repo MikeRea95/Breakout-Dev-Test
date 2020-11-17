@@ -11,18 +11,21 @@ import Ball from '../../core/components/Ball.js';
 import Mouse from '../../core/input/Mouse.js';
 import InputManager from '../../core/input/InputManager.js';
 import { MouseEvent } from "../../core/input/Mouse.js";
+import LivesController from '../../core/components/LivesController.js';
+import GameOverScene from './GameOverScene.js';
 
 export default class GameScene extends Scene{
     /**
      * 
      * @param {Engine} engine 
      */
-    constructor(engine)
+    constructor(engine, loaded = false)
     {
         super(engine);
         this.paused = true;
         this.engine = engine;
-        
+        this.score = 0;
+
         const backgroundEntity = new Entity(this, engine.getWidth() / 2, engine.getHeight() / 2);
         new Image(backgroundEntity, "gameSceneBackground");
 
@@ -34,7 +37,7 @@ export default class GameScene extends Scene{
         this.pauseButton.setImage.call(this.pauseButton, this.pauseButtonImage);
 
         const scoreEntity = new Entity(this, engine.getWidth() / 2, 50);
-        this.currentScoreText = new TextField(scoreEntity, "Score: " + 0, new TextFieldConfig("Arial", "42px", "#FFFFFF", TextAlign.CENTER));
+        this.currentScoreText = new TextField(scoreEntity, "Score: " + this.score, new TextFieldConfig("Arial", "42px", "#FFFFFF", TextAlign.CENTER));
         
         const scoreLineEntity = new Entity(this, engine.getWidth() / 2, 60);
         new Image(scoreLineEntity, "scoreDashedLine");
@@ -42,14 +45,15 @@ export default class GameScene extends Scene{
         const highScoreEntity = new Entity(this, engine.getWidth() / 2, 80);
         this.highScoreText = new TextField(highScoreEntity, "High Score: " + engine.getHighScore(), new TextFieldConfig("Arial", "16px", "#FFFFFF", TextAlign.CENTER));
 
-        const livesTextEntity = new Entity(this, engine.getWidth() - 35, 40);
-        new TextField(livesTextEntity, "Lives:", new TextFieldConfig("Arial", "16px", "#FFFFFF", TextAlign.CENTER));
+        const livesEntity = new Entity(this, engine.getWidth() - 35, 40);
+        new TextField(livesEntity, "Lives:", new TextFieldConfig("Arial", "16px", "#FFFFFF", TextAlign.CENTER));
         const lifeOne = new Entity(this, engine.getWidth() - 50, 50);
         new Image(lifeOne, "lifeFull");
         const lifeTwo = new Entity(this, engine.getWidth() - 35, 50);
         new Image(lifeTwo, "lifeFull");
         const lifeThree = new Entity(this, engine.getWidth() - 20, 50);
         new Image(lifeThree, "lifeFull");
+        this.livesController = new LivesController(livesEntity, lifeOne, lifeTwo, lifeThree);
 
         this.bricks = [];
 
@@ -70,7 +74,7 @@ export default class GameScene extends Scene{
         new Image(this.ballEntity, "ball");
         new Ball(this.ballEntity);
 
-        this.loaded = false;
+        this.loaded = loaded;
         this.input.mouse.events.addEventListener(MouseEvent.MOUSE_DOWN, this.onMouseDown, this);
 
         this.counter = 0;
@@ -106,11 +110,21 @@ export default class GameScene extends Scene{
             if(this.ballEntity.components[1].launched){
                 this.ballEntity.components[1].move.call(this.ballEntity.components[1], delta);
                 this.detectCollisions();
+                if(this.ballEntity.localPosition.y > this.engine.getHeight()){
+                    this.livesController.loseLife.call(this.livesController);
+                    this.ballEntity.components[1].reset.call(this.ballEntity.components[1]);
+                }
             }
             else{
                 this.movePaddleWithMouse();
             }
         }
+    }
+
+    gameOver(){
+        this.paused = true;
+        this.gameOverScene = new GameOverScene(this.engine, this);
+        this.engine.scenes.add(this.gameOverScene);
     }
 
     moveMouse(){
@@ -170,7 +184,6 @@ export default class GameScene extends Scene{
             distY = circleY - testY;
             distance = Math.sqrt((distX * distX) + (distY * distY));
 
-            console.log(this.ballEntity.components[1].radius);
             if(distance <= this.ballEntity.components[1].radius){
                 if(closestEdge === "Bottom" || closestEdge === "Top"){
                     this.ballEntity.components[1].flipVertical.call(this.ballEntity.components[1]);
@@ -181,7 +194,11 @@ export default class GameScene extends Scene{
                 
                 this.bricks.splice(this.bricks.indexOf(brick), 1);
                 brick.destroy();
-                this.paused = false;
+                this.score++;
+                this.currentScoreText.text = "Score: " + this.score;
+                this.engine.highScore = Math.max(this.score, this.engine.highScore);
+                this.highScoreText.text = "High Score: " + this.engine.highScore;
+                this.paused = false;    
                 break;
             }
         }

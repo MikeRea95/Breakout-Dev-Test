@@ -50,7 +50,7 @@ export default class Engine {
          */
         this.input = new InputManager(this);
 
-        this.highScore = 5;
+        this.highScore = 0;
     }
 
     getHeight() {

@@ -13,9 +13,8 @@ export default class Ball extends Component
         super(entity);
         this.entity = entity;
 
-        this.launched = false;
-        this.direction = new Vector2(0, 1);
-        this.speed = 100;
+        this.reset();
+        this.speed = 300;
 
         this.radius = 15;
     }
@@ -34,5 +33,10 @@ export default class Ball extends Component
 
     flipHorizontal(){
         this.direction.multiply(new Vector2(-1, 1));
+    }
+
+    reset(){
+        this.direction = new Vector2(0,1);
+        this.launched = false;
     }
 }
